@@ -68,6 +68,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Seed inicial de datos
+await DbSeeder.SeedAsync(app.Services);
+
 app.Run();
 
 
