@@ -4,10 +4,8 @@ namespace MovieRental.Models.Movies;
 
 public class MovieCast
 {
-    [Key]
     public int MovieId { get; set; }
 
-    [Key]
     public int PersonId { get; set; }
 
     [Required]
