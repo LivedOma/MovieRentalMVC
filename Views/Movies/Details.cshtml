@@ -1,0 +1,150 @@
+﻿@model MovieRental.ViewModels.Movies.MovieDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Movies</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h1 class="card-title h3 mb-0">@Model.Title</h1>
+                @if (!string.IsNullOrEmpty(Model.OriginalTitle) && Model.OriginalTitle != Model.Title)
+                {
+                    <small class="text-muted">(@Model.OriginalTitle)</small>
+                }
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    @foreach (var genre in Model.Genres)
+                    {
+                        <span class="badge bg-primary me-1">@genre</span>
+                    }
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <strong>Release Year:</strong>
+                        <p>@Model.ReleaseYear</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <strong>Duration:</strong>
+                        <p>@Model.DurationMinutes minutes</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <strong>Language:</strong>
+                        <p>@(Model.Language ?? "Not specified")</p>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Synopsis))
+                {
+                    <div class="mb-3">
+                        <strong>Synopsis:</strong>
+                        <p class="mt-2">@Model.Synopsis</p>
+                    </div>
+                }
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <strong>Rental Price:</strong>
+                        <p class="h4 text-success">@Model.RentalPrice.ToString("C")</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Added:</strong>
+                        <p>@Model.CreatedAt.ToString("MMMM dd, yyyy")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Cast Section *@
+        @if (Model.Cast.Any())
+        {
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Cast</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Actor</th>
+                                <th>Character</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cast in Model.Cast)
+                            {
+                                <tr>
+                                    <td>@cast.CastOrder</td>
+                                    <td>@cast.ActorName</td>
+                                    <td>@cast.CharacterName</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @* Crew Section *@
+        @if (Model.Crew.Any())
+        {
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Crew</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Role</th>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var crew in Model.Crew)
+                            {
+                                <tr>
+                                    <td><strong>@crew.Role</strong></td>
+                                    <td>@crew.PersonName</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Actions</h5>
+            </div>
+            <div class="card-body d-grid gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.MovieId" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Edit Movie
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.MovieId" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Delete Movie
+                </a>
+                <hr />
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

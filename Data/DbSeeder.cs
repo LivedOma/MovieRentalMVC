@@ -112,73 +112,73 @@ public static class DbSeeder
             new()
             {
                 FullName = "Christopher Nolan",
-                BirthDate = new DateTime(1970, 7, 30),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1970, 7, 30), DateTimeKind.Utc),
                 Bio = "British-American filmmaker known for his cerebral, often nonlinear storytelling."
             },
             new()
             {
                 FullName = "Leonardo DiCaprio",
-                BirthDate = new DateTime(1974, 11, 11),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1974, 11, 11), DateTimeKind.Utc),
                 Bio = "American actor and film producer known for his work in biopics and period films."
             },
             new()
             {
                 FullName = "Joseph Gordon-Levitt",
-                BirthDate = new DateTime(1981, 2, 17),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1981, 2, 17), DateTimeKind.Utc),
                 Bio = "American actor and filmmaker who has received various accolades."
             },
             new()
             {
                 FullName = "Ellen Page",
-                BirthDate = new DateTime(1987, 2, 21),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1987, 2, 21), DateTimeKind.Utc),
                 Bio = "Canadian actor and producer."
             },
             new()
             {
                 FullName = "Tom Hardy",
-                BirthDate = new DateTime(1977, 9, 15),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1977, 9, 15), DateTimeKind.Utc),
                 Bio = "English actor and producer."
             },
             new()
             {
                 FullName = "Quentin Tarantino",
-                BirthDate = new DateTime(1963, 3, 27),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1963, 3, 27), DateTimeKind.Utc),
                 Bio = "American filmmaker and screenwriter known for his stylized films."
             },
             new()
             {
                 FullName = "Samuel L. Jackson",
-                BirthDate = new DateTime(1948, 12, 21),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1948, 12, 21), DateTimeKind.Utc),
                 Bio = "American actor and producer, one of the most widely recognized actors of his generation."
             },
             new()
             {
                 FullName = "Uma Thurman",
-                BirthDate = new DateTime(1970, 4, 29),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1970, 4, 29), DateTimeKind.Utc),
                 Bio = "American actress and model."
             },
             new()
             {
                 FullName = "John Travolta",
-                BirthDate = new DateTime(1954, 2, 18),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1954, 2, 18), DateTimeKind.Utc),
                 Bio = "American actor, singer, and dancer."
             },
             new()
             {
                 FullName = "Frank Darabont",
-                BirthDate = new DateTime(1959, 1, 28),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1959, 1, 28), DateTimeKind.Utc),
                 Bio = "Hungarian-American film director, screenwriter and producer."
             },
             new()
             {
                 FullName = "Tim Robbins",
-                BirthDate = new DateTime(1958, 10, 16),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1958, 10, 16), DateTimeKind.Utc),
                 Bio = "American actor, filmmaker, and activist."
             },
             new()
             {
                 FullName = "Morgan Freeman",
-                BirthDate = new DateTime(1937, 6, 1),
+                BirthDate = DateTime.SpecifyKind(new DateTime(1937, 6, 1), DateTimeKind.Utc),
                 Bio = "American actor, director, and narrator."
             }
         };
