@@ -1,0 +1,101 @@
+﻿@model List<MovieRental.ViewModels.Genres.GenreViewModel>
+
+@{
+    ViewData["Title"] = "Manage Genres";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        <i class="bi bi-tags"></i> Manage Genres
+    </h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Add New Genre
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No genres found. <a asp-action="Create">Add your first genre!</a>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <strong>All Genres</strong>
+                    <span class="badge bg-secondary ms-2">@Model.Count</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Genre Name</th>
+                                <th class="text-center">Movies</th>
+                                <th style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var genre in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-primary fs-6">@genre.Name</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary">@genre.MovieCount</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="Edit" asp-route-id="@genre.GenreId"
+                                               class="btn btn-outline-warning" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@genre.GenreId"
+                                               class="btn btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <i class="bi bi-info-circle"></i> Information
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">
+                        Genres are used to categorize movies. A movie can belong to multiple genres.
+                    </p>
+                    <p class="small text-muted mb-0">
+                        <strong>Note:</strong> You cannot delete a genre that has movies associated with it.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

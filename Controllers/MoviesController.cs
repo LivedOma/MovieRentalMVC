@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieRental.Data;
@@ -84,6 +85,7 @@ public class MoviesController : Controller
     }
 
     // GET: Movies/Create
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create()
     {
         var viewModel = new MovieFormViewModel
@@ -98,6 +100,7 @@ public class MoviesController : Controller
     // POST: Movies/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(MovieFormViewModel viewModel)
     {
         if (ModelState.IsValid)
@@ -140,6 +143,7 @@ public class MoviesController : Controller
     }
 
     // GET: Movies/Edit/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null) return NotFound();
@@ -172,6 +176,7 @@ public class MoviesController : Controller
     // POST: Movies/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id, MovieFormViewModel viewModel)
     {
         if (id != viewModel.MovieId) return NotFound();
@@ -228,6 +233,7 @@ public class MoviesController : Controller
     }
 
     // GET: Movies/Delete/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null) return NotFound();
@@ -255,6 +261,7 @@ public class MoviesController : Controller
     // POST: Movies/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var movie = await _context.Movies.FindAsync(id);

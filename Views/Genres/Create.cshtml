@@ -1,0 +1,47 @@
+﻿@model MovieRental.ViewModels.Genres.GenreViewModel
+
+@{
+    ViewData["Title"] = "Add New Genre";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Genres</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Add New</li>
+    </ol>
+</nav>
+
+<h1>Add New Genre</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" placeholder="e.g., Sci-Fi" autofocus />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Create Genre
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

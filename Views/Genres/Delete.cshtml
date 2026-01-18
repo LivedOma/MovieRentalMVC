@@ -1,0 +1,70 @@
+﻿@model MovieRental.ViewModels.Genres.GenreViewModel
+
+@{
+    ViewData["Title"] = $"Delete: {Model.Name}";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Genres</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Delete: @Model.Name</li>
+    </ol>
+</nav>
+
+<h1 class="text-danger">Delete Genre</h1>
+
+@if (Model.MovieCount > 0)
+{
+    <div class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <strong>Cannot delete!</strong> This genre has @Model.MovieCount movie(s) associated with it.
+        You must remove all movies from this genre before deleting it.
+    </div>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <strong>Warning!</strong> Are you sure you want to delete this genre? This action cannot be undone.
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Genre to be deleted</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Name</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-primary fs-6">@Model.Name</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Movies</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-secondary">@Model.MovieCount</span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" name="id" value="@Model.GenreId" />
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Yes, Delete
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
