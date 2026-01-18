@@ -1,0 +1,36 @@
+
+## .NET Core
+bin/
+obj/
+publish/
+
+## User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+## IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+
+## Secrets
+appsettings.Development.json
+*.pfx
+*.key
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Logs
+logs/
+*.log
+
+## Entity Framework
+*.db
+*.db-shm
+*.db-wal
