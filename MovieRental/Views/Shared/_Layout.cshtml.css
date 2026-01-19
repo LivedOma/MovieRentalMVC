@@ -1,42 +1,66 @@
-﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
+/* Layout styling aligned to the new palette */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+.navbar {
+  background-color: var(--color-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.12);
 }
 
-a {
-  color: #0077cc;
+.navbar .navbar-brand {
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.navbar .nav-link {
+  color: #e2e8f0;
+  font-weight: 500;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: var(--color-secondary);
+}
+
+.navbar .dropdown-menu {
+  border: 0;
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+  padding: 0.5rem;
+}
+
+.navbar .dropdown-item {
+  border-radius: 8px;
+}
+
+.navbar .dropdown-item:hover,
+.navbar .dropdown-item:focus {
+  background-color: rgba(250, 204, 21, 0.12);
+  color: var(--color-primary);
+}
+
+.navbar .navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.navbar .badge {
+  font-weight: 600;
 }
 
 .border-top {
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
 }
+
 .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+  box-shadow: var(--shadow-soft);
 }
 
 .footer {
@@ -44,5 +68,7 @@ button.accept-policy {
   bottom: 0;
   width: 100%;
   white-space: nowrap;
-  line-height: 60px;
+  line-height: 52px;
+  background: linear-gradient(90deg, rgba(30, 58, 138, 0.08), rgba(30, 58, 138, 0));
+  color: var(--color-muted);
 }

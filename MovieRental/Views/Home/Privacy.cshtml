@@ -1,6 +1,54 @@
-﻿@{
+@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <h1 class="fw-bold" style="color: var(--color-primary);">Política de Privacidad</h1>
+        <p class="text-muted">Última actualización: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">1. Datos que recopilamos</h5>
+                <p class="text-muted">Correo electrónico, nombre de usuario y actividad de renta para operar el servicio. No solicitamos datos sensibles.</p>
+
+                <h5 class="fw-bold mb-3">2. Uso de la información</h5>
+                <ul class="text-muted mb-4">
+                    <li>Autenticar tu sesión y mantener tu carrito.</li>
+                    <li>Registrar alquileres y estados (disponible, rentada, próximos).</li>
+                    <li>Mejorar la experiencia con métricas anónimas de uso.</li>
+                </ul>
+
+                <h5 class="fw-bold mb-3">3. Conservación y seguridad</h5>
+                <p class="text-muted">Los datos se almacenan de forma cifrada en tránsito (HTTPS). Solo el personal autorizado puede acceder a registros de administración.</p>
+
+                <h5 class="fw-bold mb-3">4. Cookies</h5>
+                <p class="text-muted">Usamos cookies esenciales para mantener tu sesión y preferencias de filtrado. No utilizamos cookies publicitarias de terceros.</p>
+
+                <h5 class="fw-bold mb-3">5. Tus derechos</h5>
+                <p class="text-muted">Puedes solicitar acceso, rectificación o eliminación de tus datos. Contáctanos para ejercer estos derechos.</p>
+
+                <h5 class="fw-bold mb-3">6. Contacto</h5>
+                <p class="text-muted mb-0">Si tienes preguntas sobre esta política, escríbenos a <a href="mailto:privacy@movierental.com">privacy@movierental.com</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="text-uppercase text-muted fw-bold">Buenas prácticas</h6>
+                <ul class="list-unstyled mt-3 text-muted">
+                    <li class="mb-2"><i class="bi bi-lock-fill text-success"></i> Sesiones seguras y expiración controlada.</li>
+                    <li class="mb-2"><i class="bi bi-shield-check text-primary"></i> Roles y autorización para áreas de administración.</li>
+                    <li class="mb-2"><i class="bi bi-bell text-warning"></i> Alertas claras sobre estado de rentas.</li>
+                    <li class="mb-0"><i class="bi bi-database-check text-secondary"></i> Logs internos para auditoría técnica.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

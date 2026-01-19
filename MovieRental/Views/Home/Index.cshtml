@@ -1,8 +1,189 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row align-items-center mb-5">
+    <div class="col-lg-7">
+        <div class="p-4 p-lg-5" style="background: linear-gradient(120deg, rgba(30,58,138,0.12), rgba(250,204,21,0.14)); border-radius: 16px;">
+            <span class="badge bg-secondary mb-3" style="font-size: 0.9rem;">Streaming-ready demo</span>
+            <h1 class="display-5 fw-bold mb-3" style="color: var(--color-primary);">
+                Renta, mira y gestiona tu catálogo en minutos
+            </h1>
+            <p class="lead mb-4 text-muted">
+                MovieRental combina un catálogo limpio, filtros rápidos y checkout seguro. Ideal para mostrar catálogos de películas, estrenos y próximos lanzamientos.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-controller="Movies" asp-action="Index" class="btn btn-primary btn-lg">
+                    <i class="bi bi-film"></i> Ver catálogo
+                </a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-person-plus"></i> Crear cuenta
+                </a>
+            </div>
+            <div class="d-flex align-items-center gap-3 mt-4 text-muted small">
+                <div><i class="bi bi-shield-check text-success"></i> Pagos y sesión seguras</div>
+                <div><i class="bi bi-sliders text-primary"></i> Filtros por género, año, precio</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5 mt-4 mt-lg-0">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Novedades y estados</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge bg-danger me-3">🔴 Estreno</span>
+                    <span class="text-muted">Destaca lanzamientos con el acento rojo.</span>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge bg-success me-3">🟢 Disponible</span>
+                    <span class="text-muted">Color verde para títulos listos para rentar.</span>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge bg-warning me-3">🟡 Próximamente</span>
+                    <span class="text-muted">Amarillo para expectativa de lanzamientos.</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-info me-3">🔵 Rentada</span>
+                    <span class="text-muted">Azul para títulos en alquiler activo.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge bg-warning text-dark me-2">⭐</span>
+                    <h5 class="mb-0 fw-bold">Catálogo atractivo</h5>
+                </div>
+                <p class="text-muted mb-0">Cards con énfasis en el póster, precios claros y llamadas a rentar o ver detalles sin ruido visual.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge bg-success me-2">⚡</span>
+                    <h5 class="mb-0 fw-bold">Filtros rápidos</h5>
+                </div>
+                <p class="text-muted mb-0">Búsqueda por texto, género, año y precio. Badges de filtros activos y paginación clara para muchos títulos.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge bg-secondary me-2">🛡️</span>
+                    <h5 class="mb-0 fw-bold">Gestión segura</h5>
+                </div>
+                <p class="text-muted mb-0">Rutas protegidas, roles Admin y vista de logs. Carrito y checkout con feedback inmediato.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0" style="color: var(--color-primary);">Destacados del catálogo</h4>
+    <a asp-controller="Movies" asp-action="Index" class="btn btn-link fw-semibold">Ver todo el catálogo</a>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-5">
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="fw-bold mb-1">The Dark Knight</h5>
+                        <div class="text-muted small">2008 • 152 min • Acción, Drama, Thriller</div>
+                    </div>
+                    <span class="badge bg-danger">🔴 Estreno</span>
+                </div>
+                <p class="text-muted mb-3">Batman y Joker redefinen el cine de superhéroes con tensión y ética en juego.</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="h5 mb-0 text-success">$4.99</span>
+                    <a asp-controller="Movies" asp-action="Index" asp-route-searchTerm="The Dark Knight" class="btn btn-primary btn-sm">Ver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="fw-bold mb-1">Interstellar</h5>
+                        <div class="text-muted small">2014 • 169 min • Acción</div>
+                    </div>
+                    <span class="badge bg-success">🟢 Disponible</span>
+                </div>
+                <p class="text-muted mb-3">Viaje interestelar con ciencia y emoción. Ideal para destacar pósters grandes.</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="h5 mb-0 text-success">$4.99</span>
+                    <a asp-controller="Movies" asp-action="Index" asp-route-searchTerm="Interstellar" class="btn btn-primary btn-sm">Ver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="fw-bold mb-1">The Shawshank Redemption</h5>
+                        <div class="text-muted small">1994 • 142 min • Drama</div>
+                    </div>
+                    <span class="badge bg-info">🔵 Rentada</span>
+                </div>
+                <p class="text-muted mb-3">Esperanza y libertad en un drama icónico. Perfecto para resaltar valor crítico.</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="h5 mb-0 text-success">$3.99</span>
+                    <a asp-controller="Movies" asp-action="Index" asp-route-searchTerm="Shawshank" class="btn btn-primary btn-sm">Ver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2">Acción y Sci-Fi</h6>
+                <p class="text-muted small mb-3">Terminator 2 · Alien · The Matrix · The Lord of the Rings · Gladiator</p>
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="badge bg-success">🟢 Disponible</span>
+                    <span class="text-success fw-bold">Desde $3.49</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2">Drama imprescindible</h6>
+                <p class="text-muted small mb-3">Goodfellas · The Green Mile · Schindler's List · Forrest Gump · Pulp Fiction</p>
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="badge bg-success">🟢 Disponible</span>
+                    <span class="text-success fw-bold">Desde $3.49</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2">Próximos destacados</h6>
+                <p class="text-muted small mb-3">Jurassic Park · Inception</p>
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="badge bg-warning">🟡 Próximamente</span>
+                    <span class="text-muted fw-semibold">Activa alertas y banners</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

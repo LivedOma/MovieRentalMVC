@@ -1,11 +1,28 @@
 /* Movie Cards */
 .card {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.14) !important;
+    border-color: rgba(30, 58, 138, 0.25);
+}
+
+.card-title a {
+    color: var(--color-text);
+    font-weight: 700;
+}
+
+.card-subtitle {
+    color: var(--color-muted);
+}
+
+.card-footer {
+    border-top: 1px solid #e2e8f0;
+    background-color: #f8fafc;
 }
 
 /* Stretched link fix for buttons */
@@ -19,22 +36,39 @@
 }
 
 /* Filter section */
+#filtersCollapse .card-header {
+    background: linear-gradient(90deg, rgba(30, 58, 138, 0.08), rgba(30, 58, 138, 0.02));
+    color: var(--color-text);
+}
+
 #filtersCollapse .form-label {
-    font-weight: 500;
-    font-size: 0.875rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+#filtersCollapse .input-group-text {
+    background-color: rgba(30, 58, 138, 0.08);
+    border: 1px solid #e2e8f0;
 }
 
 /* Active filter badges */
 .badge.bg-info {
-    font-weight: normal;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
 }
 
 /* Price display */
 .card-footer .h5 {
-    font-weight: 600;
+    font-weight: 700;
+}
+
+.card-footer .h5.text-success {
+    color: var(--color-available) !important;
 }
 
 /* Search results count */
 .text-muted strong {
-    color: #333;
+    color: var(--color-text);
 }
