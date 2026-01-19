@@ -249,6 +249,10 @@ else
                                    class="btn btn-outline-warning" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+                                <a asp-action="Delete" asp-route-id="@movie.MovieId"
+                                   class="btn btn-outline-danger" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </a>
                             }
                         </div>
                     </div>

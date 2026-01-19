@@ -20,3 +20,49 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Validation Styles */
+.input-validation-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.field-validation-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.validation-summary-errors {
+    color: #dc3545;
+}
+
+.validation-summary-errors ul {
+    margin-bottom: 0;
+    padding-left: 1.25rem;
+}
+
+/* Valid field indicator */
+.input-validation-valid:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+/* Custom validation alert */
+.alert-validation {
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+}
+
+.alert-validation ul {
+    margin-bottom: 0;
+}
+
+.alert-validation li {
+    margin-bottom: 0.25rem;
+}
+
+.alert-validation li:last-child {
+    margin-bottom: 0;
+}

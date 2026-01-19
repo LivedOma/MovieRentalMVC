@@ -1,0 +1,25 @@
+﻿@if (!ViewData.ModelState.IsValid)
+{
+    var errors = ViewData.ModelState
+        .SelectMany(x => x.Value?.Errors ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>())
+        .Select(x => x.ErrorMessage)
+        .Where(x => !string.IsNullOrEmpty(x))
+        .Distinct()
+        .ToList();
+
+    if (errors.Any())
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <h6 class="alert-heading mb-2">
+                <i class="bi bi-exclamation-triangle-fill"></i> Please correct the following errors:
+            </h6>
+            <ul class="mb-0 ps-3">
+                @foreach (var error in errors)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+}

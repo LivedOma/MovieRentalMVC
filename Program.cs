@@ -2,6 +2,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MovieRental.Data;
 using MovieRental.Models.Users;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using MovieRental.Validators;
+using MovieRental.ViewModels.Movies;
+using MovieRental.ViewModels.Account;
+using MovieRental.ViewModels.Genres;
+using MovieRental.ViewModels.People;
+using MovieRental.ViewModels.MovieCredits;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +50,22 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // 4. Servicios MVC
 builder.Services.AddControllersWithViews();
+
+// FluentValidation - usando la nueva API
+builder.Services.AddFluentValidationAutoValidation(config =>
+{
+    config.DisableDataAnnotationsValidation = false; // Mantener DataAnnotations activas
+})
+.AddFluentValidationClientsideAdapters(); // Habilitar validación del lado del cliente
+
+// Registrar validadores
+builder.Services.AddScoped<IValidator<MovieFormViewModel>, MovieFormValidator>();
+builder.Services.AddScoped<IValidator<RegisterViewModel>, RegisterValidator>();
+builder.Services.AddScoped<IValidator<LoginViewModel>, LoginValidator>();
+builder.Services.AddScoped<IValidator<GenreViewModel>, GenreValidator>();
+builder.Services.AddScoped<IValidator<PersonFormViewModel>, PersonFormValidator>();
+builder.Services.AddScoped<IValidator<MovieCastFormViewModel>, MovieCastValidator>();
+builder.Services.AddScoped<IValidator<MovieCrewFormViewModel>, MovieCrewValidator>();
 
 var app = builder.Build();
 

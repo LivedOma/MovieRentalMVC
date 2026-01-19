@@ -26,7 +26,7 @@
             <div class="card-body">
                 <form asp-action="AddCast" method="post">
                     <input type="hidden" asp-for="MovieId" />
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    <partial name="_ValidationSummary" />
 
                     <div class="mb-3">
                         <label asp-for="PersonId" class="form-label"></label>
