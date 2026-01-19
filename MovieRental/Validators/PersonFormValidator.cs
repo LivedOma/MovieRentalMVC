@@ -10,7 +10,7 @@ public class PersonFormValidator : AbstractValidator<PersonFormViewModel>
         RuleFor(x => x.FullName)
             .NotEmpty().WithMessage("Full name is required")
             .MaximumLength(150).WithMessage("Full name cannot exceed 150 characters")
-            .Matches(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s.'-]+$")
+            .Matches(@"^[\p{L}\s.'-]+$")
             .WithMessage("Name can only contain letters, spaces, periods, hyphens, and apostrophes");
 
         RuleFor(x => x.BirthDate)
