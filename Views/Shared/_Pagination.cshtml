@@ -1,0 +1,78 @@
+﻿@model MovieRental.ViewModels.Movies.MovieSearchViewModel
+
+@if (Model.Movies != null && Model.Movies.TotalPages > 1)
+{
+    <nav aria-label="Page navigation" class="mt-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            @* Información de resultados *@
+            <div class="text-muted small">
+                Showing <strong>@Model.Movies.FirstItemIndex</strong> to 
+                <strong>@Model.Movies.LastItemIndex</strong> of 
+                <strong>@Model.Movies.TotalCount</strong> results
+            </div>
+
+            @* Controles de paginación *@
+            <ul class="pagination mb-0">
+                @* Primera página *@
+                <li class="page-item @(Model.Movies.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" href="@Url.Action("Index")@Model.GetQueryString(page: 1)" 
+                       title="First Page">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                </li>
+
+                @* Página anterior *@
+                <li class="page-item @(Model.Movies.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" 
+                       href="@Url.Action("Index")@Model.GetQueryString(page: Model.Movies.PageIndex - 1)"
+                       title="Previous Page">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+
+                @* Números de página *@
+                @foreach (var pageNum in Model.Movies.GetPageNumbers(5))
+                {
+                    <li class="page-item @(pageNum == Model.Movies.PageIndex ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index")@Model.GetQueryString(page: pageNum)">
+                            @pageNum
+                        </a>
+                    </li>
+                }
+
+                @* Página siguiente *@
+                <li class="page-item @(Model.Movies.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" 
+                       href="@Url.Action("Index")@Model.GetQueryString(page: Model.Movies.PageIndex + 1)"
+                       title="Next Page">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+
+                @* Última página *@
+                <li class="page-item @(Model.Movies.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" 
+                       href="@Url.Action("Index")@Model.GetQueryString(page: Model.Movies.TotalPages)"
+                       title="Last Page">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                </li>
+            </ul>
+
+            @* Selector de tamaño de página *@
+            <div class="d-flex align-items-center gap-2">
+                <label class="text-muted small mb-0">Show:</label>
+                <select class="form-select form-select-sm" style="width: auto;"
+                        onchange="window.location.href='@Url.Action("Index")@Model.GetQueryString(page: 1)&pageSize=' + this.value">
+                    @foreach (var option in MovieRental.ViewModels.Movies.MovieSearchViewModel.GetPageSizeOptions())
+                    {
+                        <option value="@option.Value" 
+                                selected="@(option.Value == Model.PageSize.ToString())">
+                            @option.Text
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+    </nav>
+}

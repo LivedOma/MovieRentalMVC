@@ -5,6 +5,7 @@ using MovieRental.Data;
 using MovieRental.Models.Movies;
 using MovieRental.ViewModels.Movies;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MovieRental.Helpers;
 
 namespace MovieRental.Controllers;
 
@@ -18,7 +19,6 @@ public class MoviesController : Controller
     }
 
     // GET: Movies
-// GET: Movies
     public async Task<IActionResult> Index(
         string? searchTerm,
         int? genreId,
@@ -27,8 +27,14 @@ public class MoviesController : Controller
         decimal? priceFrom,
         decimal? priceTo,
         string? sortBy,
-        string? sortOrder)
+        string? sortOrder,
+        int page = 1,
+        int pageSize = 12)
     {
+        // Validar parámetros de paginación
+        page = Math.Max(1, page);
+        pageSize = new[] { 6, 12, 24, 48 }.Contains(pageSize) ? pageSize : 12;
+
         // Query base
         var query = _context.Movies
             .Include(m => m.MovieGenres)
@@ -86,21 +92,20 @@ public class MoviesController : Controller
             _ => query.OrderByDescending(m => m.CreatedAt) // Default: más recientes primero
         };
 
-        // Obtener total antes de proyectar
-        var totalCount = await query.CountAsync();
-
         // Proyectar a ViewModel
-        var movies = await query
-            .Select(m => new MovieIndexViewModel
-            {
-                MovieId = m.MovieId,
-                Title = m.Title,
-                ReleaseYear = m.ReleaseYear,
-                DurationMinutes = m.DurationMinutes,
-                RentalPrice = m.RentalPrice,
-                Genres = m.MovieGenres.Select(mg => mg.Genre.Name).ToList()
-            })
-            .ToListAsync();
+        var projectedQuery = query.Select(m => new MovieIndexViewModel
+        {
+            MovieId = m.MovieId,
+            Title = m.Title,
+            ReleaseYear = m.ReleaseYear,
+            DurationMinutes = m.DurationMinutes,
+            RentalPrice = m.RentalPrice,
+            Genres = m.MovieGenres.Select(mg => mg.Genre.Name).ToList()
+        });
+
+        // Aplicar paginación
+        var paginatedMovies = await PaginatedList<MovieIndexViewModel>
+            .CreateAsync(projectedQuery, page, pageSize);
 
         // Preparar géneros para el dropdown
         var genres = await _context.Genres
@@ -118,15 +123,18 @@ public class MoviesController : Controller
             PriceTo = priceTo,
             SortBy = sortBy ?? "created",
             SortOrder = sortOrder ?? "desc",
-            Movies = movies,
-            TotalCount = totalCount,
+            PageIndex = page,
+            PageSize = pageSize,
+            Movies = paginatedMovies,
             Genres = new SelectList(genres, "GenreId", "Name", genreId),
             SortOptions = new SelectList(MovieSearchViewModel.GetSortOptions(), "Value", "Text", sortBy ?? "created"),
-            SortOrderOptions = new SelectList(MovieSearchViewModel.GetSortOrderOptions(), "Value", "Text", sortOrder ?? "desc")
+            SortOrderOptions = new SelectList(MovieSearchViewModel.GetSortOrderOptions(), "Value", "Text", sortOrder ?? "desc"),
+            PageSizeOptions = new SelectList(MovieSearchViewModel.GetPageSizeOptions(), "Value", "Text", pageSize.ToString())
         };
 
         return View(viewModel);
     }
+
     // GET: Movies/Details/5
     public async Task<IActionResult> Details(int? id)
     {

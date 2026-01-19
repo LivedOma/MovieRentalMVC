@@ -68,8 +68,15 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Seed inicial de datos
+// Seed de datos iniciales
 await DbSeeder.SeedAsync(app.Services);
+
+// Seed de películas adicionales para pruebas de paginación
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await AdditionalSeeder.SeedMoreMoviesAsync(context);
+}
 
 app.Run();
 
