@@ -1,0 +1,70 @@
+﻿@model MovieRental.ViewModels.MovieCredits.MovieCastFormViewModel
+
+@{
+    ViewData["Title"] = $"Edit Cast: {Model.MovieTitle}";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Movies" asp-action="Index">Movies</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Movies" asp-action="Details" asp-route-id="@Model.MovieId">@Model.MovieTitle</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-action="Manage" asp-route-id="@Model.MovieId">Manage Credits</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Cast</li>
+    </ol>
+</nav>
+
+<h1>Edit Cast Member</h1>
+<p class="text-muted">Editing cast in: <strong>@Model.MovieTitle</strong></p>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="EditCast" method="post">
+                    <input type="hidden" asp-for="MovieId" />
+                    <input type="hidden" asp-for="PersonId" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="PersonId" class="form-label"></label>
+                        <select asp-for="PersonId" asp-items="Model.AvailablePeople" class="form-select" disabled>
+                        </select>
+                        <small class="text-muted">Actor cannot be changed. Remove and add a new one instead.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CharacterName" class="form-label"></label>
+                        <input asp-for="CharacterName" class="form-control" />
+                        <span asp-validation-for="CharacterName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CastOrder" class="form-label"></label>
+                        <input asp-for="CastOrder" class="form-control" type="number" min="1" max="100" />
+                        <span asp-validation-for="CastOrder" class="text-danger"></span>
+                        <small class="text-muted">1 = Lead actor, 2 = Second billing, etc.</small>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Save Changes
+                        </button>
+                        <a asp-action="Manage" asp-route-id="@Model.MovieId" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

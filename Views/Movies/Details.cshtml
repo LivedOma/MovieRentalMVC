@@ -133,6 +133,7 @@
             <div class="card-header">
                 <h5 class="mb-0">Actions</h5>
             </div>
+
             <div class="card-body d-grid gap-2">
                 @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
@@ -147,7 +148,7 @@
                 }
                 else
                 {
-                    <a asp-controller="Account" asp-action="Login" 
+                    <a asp-controller="Account" asp-action="Login"
                     asp-route-returnUrl="@Context.Request.Path" class="btn btn-success">
                         <i class="bi bi-box-arrow-in-right"></i> Sign in to Rent
                     </a>
@@ -156,6 +157,10 @@
 
                 @if (User.IsInRole("Admin"))
                 {
+                    <a asp-controller="MovieCredits" asp-action="Manage" asp-route-id="@Model.MovieId" 
+                    class="btn btn-info">
+                        <i class="bi bi-people"></i> Manage Cast & Crew
+                    </a>
                     <a asp-action="Edit" asp-route-id="@Model.MovieId" class="btn btn-warning">
                         <i class="bi bi-pencil"></i> Edit Movie
                     </a>
@@ -164,11 +169,11 @@
                     </a>
                     <hr />
                 }
-                
+
                 <a asp-action="Index" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Back to List
                 </a>
-            </div>            
+            </div>             
         </div>
     </div>
 </div>

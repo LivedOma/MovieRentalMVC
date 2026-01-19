@@ -1,0 +1,155 @@
+﻿@model MovieRental.ViewModels.MovieCredits.ManageCreditsViewModel
+
+@{
+    ViewData["Title"] = $"Manage Credits: {Model.MovieTitle}";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Movies" asp-action="Index">Movies</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Movies" asp-action="Details" asp-route-id="@Model.MovieId">@Model.MovieTitle</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Manage Credits</li>
+    </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1>Manage Credits</h1>
+        <p class="text-muted mb-0">@Model.MovieTitle (@Model.ReleaseYear)</p>
+    </div>
+    <a asp-controller="Movies" asp-action="Details" asp-route-id="@Model.MovieId" 
+       class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Movie
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+    @* Cast Section *@
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-camera-reels"></i> Cast
+                    <span class="badge bg-info">@Model.Cast.Count</span>
+                </h5>
+                <a asp-action="AddCast" asp-route-id="@Model.MovieId" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-lg"></i> Add Actor
+                </a>
+            </div>
+            
+            @if (!Model.Cast.Any())
+            {
+                <div class="card-body text-center text-muted">
+                    <i class="bi bi-person-x" style="font-size: 2rem;"></i>
+                    <p class="mt-2">No cast members yet.</p>
+                </div>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var cast in Model.Cast)
+                    {
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="fw-bold">
+                                        @if (cast.CastOrder == 1)
+                                        {
+                                            <span class="badge bg-warning text-dark me-1">Lead</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary me-1">#@cast.CastOrder</span>
+                                        }
+                                        <a asp-controller="People" asp-action="Details" 
+                                           asp-route-id="@cast.PersonId" class="text-decoration-none">
+                                            @cast.PersonName
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">as @cast.CharacterName</small>
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="EditCast" 
+                                       asp-route-movieId="@Model.MovieId" 
+                                       asp-route-personId="@cast.PersonId"
+                                       class="btn btn-outline-warning" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="RemoveCast" method="post" class="d-inline"
+                                          onsubmit="return confirm('Remove this cast member?');">
+                                        <input type="hidden" name="movieId" value="@Model.MovieId" />
+                                        <input type="hidden" name="personId" value="@cast.PersonId" />
+                                        <button type="submit" class="btn btn-outline-danger" title="Remove">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+
+    @* Crew Section *@
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-film"></i> Crew
+                    <span class="badge bg-secondary">@Model.Crew.Count</span>
+                </h5>
+                <a asp-action="AddCrew" asp-route-id="@Model.MovieId" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-lg"></i> Add Crew
+                </a>
+            </div>
+            
+            @if (!Model.Crew.Any())
+            {
+                <div class="card-body text-center text-muted">
+                    <i class="bi bi-person-x" style="font-size: 2rem;"></i>
+                    <p class="mt-2">No crew members yet.</p>
+                </div>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var crew in Model.Crew)
+                    {
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="badge bg-secondary me-1">@crew.Role</span>
+                                    <a asp-controller="People" asp-action="Details" 
+                                       asp-route-id="@crew.PersonId" class="text-decoration-none">
+                                        @crew.PersonName
+                                    </a>
+                                </div>
+                                <form asp-action="RemoveCrew" method="post" class="d-inline"
+                                      onsubmit="return confirm('Remove this crew member?');">
+                                    <input type="hidden" name="movieId" value="@Model.MovieId" />
+                                    <input type="hidden" name="personId" value="@crew.PersonId" />
+                                    <input type="hidden" name="role" value="@crew.Role" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>

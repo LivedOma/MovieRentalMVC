@@ -1,0 +1,98 @@
+﻿@model MovieRental.ViewModels.MovieCredits.MovieCrewFormViewModel
+
+@{
+    ViewData["Title"] = $"Add Crew: {Model.MovieTitle}";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Movies" asp-action="Index">Movies</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Movies" asp-action="Details" asp-route-id="@Model.MovieId">@Model.MovieTitle</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-action="Manage" asp-route-id="@Model.MovieId">Manage Credits</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Add Crew</li>
+    </ol>
+</nav>
+
+<h1>Add Crew Member</h1>
+<p class="text-muted">Adding crew to: <strong>@Model.MovieTitle</strong></p>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="AddCrew" method="post">
+                    <input type="hidden" asp-for="MovieId" />
+                    <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="PersonId" class="form-label"></label>
+                        <select asp-for="PersonId" asp-items="Model.AvailablePeople" class="form-select">
+                            <option value="">-- Select a Person --</option>
+                        </select>
+                        <span asp-validation-for="PersonId" class="text-danger"></span>
+                        <small class="text-muted">
+                            <a asp-controller="People" asp-action="Create" target="_blank">
+                                Create new person <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Role" class="form-label"></label>
+                        <select asp-for="Role" class="form-select">
+                            <option value="">-- Select a Role --</option>
+                            @foreach (var role in MovieRental.ViewModels.MovieCredits.MovieCrewFormViewModel.PredefinedRoles)
+                            {
+                                <option value="@role">@role</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                        <small class="text-muted">Or type a custom role below:</small>
+                        <input type="text" class="form-control mt-2" id="customRole" 
+                               placeholder="Custom role (optional)" />
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Add to Crew
+                        </button>
+                        <a asp-action="Manage" asp-route-id="@Model.MovieId" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Si se escribe un rol personalizado, actualizar el select
+        document.getElementById('customRole').addEventListener('input', function() {
+            if (this.value) {
+                document.getElementById('Role').value = '';
+                // Crear una opción temporal
+                var select = document.getElementById('Role');
+                var option = document.createElement('option');
+                option.value = this.value;
+                option.text = this.value + ' (custom)';
+                option.selected = true;
+                
+                // Remover opción personalizada anterior si existe
+                var existingCustom = select.querySelector('option[data-custom]');
+                if (existingCustom) existingCustom.remove();
+                
+                option.setAttribute('data-custom', 'true');
+                select.appendChild(option);
+            }
+        });
+    </script>
+}
