@@ -1,0 +1,148 @@
+﻿@model List<MovieRental.ViewModels.People.PersonIndexViewModel>
+
+@{
+    ViewData["Title"] = "People";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-people"></i> People</h1>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Add New Person
+        </a>
+    }
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@* Búsqueda *@
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control" 
+                           placeholder="Search by name..." 
+                           value="@ViewData["Search"]" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Search</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        @if (ViewData["Search"] != null)
+        {
+            <span>No people found matching "<strong>@ViewData["Search"]</strong>". </span>
+            <a asp-action="Index">Clear search</a>
+        }
+        else
+        {
+            <span>No people found. </span>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Create">Add your first person!</a>
+            }
+        }
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var person in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a asp-action="Details" asp-route-id="@person.PersonId" 
+                               class="text-decoration-none">
+                                @person.FullName
+                            </a>
+                        </h5>
+                        <p class="card-text text-muted small">
+                            @if (person.BirthDate.HasValue)
+                            {
+                                <span>
+                                    <i class="bi bi-calendar"></i> 
+                                    @person.BirthDate.Value.ToString("MMMM dd, yyyy")
+                                    @if (person.Age.HasValue)
+                                    {
+                                        <span>(@person.Age years old)</span>
+                                    }
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Birth date unknown</span>
+                            }
+                        </p>
+                        <div class="mt-2">
+                            @if (person.MoviesAsActor > 0)
+                            {
+                                <span class="badge bg-info me-1">
+                                    <i class="bi bi-camera-reels"></i> @person.MoviesAsActor Acting
+                                </span>
+                            }
+                            @if (person.MoviesAsCrew > 0)
+                            {
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-film"></i> @person.MoviesAsCrew Crew
+                                </span>
+                            }
+                            @if (person.MoviesAsActor == 0 && person.MoviesAsCrew == 0)
+                            {
+                                <span class="badge bg-light text-dark">No movies yet</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a asp-action="Details" asp-route-id="@person.PersonId"
+                               class="btn btn-outline-info" title="Details">
+                                <i class="bi bi-eye"></i> Details
+                            </a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@person.PersonId"
+                                   class="btn btn-outline-warning" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@person.PersonId"
+                                   class="btn btn-outline-danger" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+    <div class="text-muted">
+        Showing @Model.Count person(s)
+    </div>
+}

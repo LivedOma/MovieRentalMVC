@@ -1,0 +1,88 @@
+﻿@model MovieRental.ViewModels.People.PersonDetailsViewModel
+
+@{
+    ViewData["Title"] = $"Delete: {Model.FullName}";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">People</a></li>
+        <li class="breadcrumb-item">
+            <a asp-action="Details" asp-route-id="@Model.PersonId">@Model.FullName</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Delete</li>
+    </ol>
+</nav>
+
+<h1 class="text-danger">Delete Person</h1>
+
+@{
+    var hasMovies = Model.MoviesAsActor.Any() || Model.MoviesAsCrew.Any();
+}
+
+@if (hasMovies)
+{
+    <div class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <strong>Cannot delete!</strong> This person has @(Model.MoviesAsActor.Count + Model.MoviesAsCrew.Count) 
+        movie credit(s). You must remove all movie associations before deleting.
+    </div>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <strong>Warning!</strong> Are you sure you want to delete this person? This action cannot be undone.
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Person to be deleted</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Name</dt>
+                        <dd class="col-sm-8"><strong>@Model.FullName</strong></dd>
+
+                        <dt class="col-sm-4">Birth Date</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.BirthDate.HasValue)
+                            {
+                                @Model.BirthDate.Value.ToString("MMMM dd, yyyy")
+                            }
+                            else
+                            {
+                                <span class="text-muted">Unknown</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Movie Credits</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-secondary">0</span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" name="id" value="@Model.PersonId" />
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Yes, Delete
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.PersonId" 
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
