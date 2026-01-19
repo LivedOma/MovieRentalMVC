@@ -1,11 +1,11 @@
-﻿@model List<MovieRental.ViewModels.Movies.MovieIndexViewModel>
+﻿@model MovieRental.ViewModels.Movies.MovieSearchViewModel
 
 @{
     ViewData["Title"] = "Movies";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Movies</h1>
+    <h1><i class="bi bi-film"></i> Movies</h1>
     @if (User.IsInRole("Admin"))
     {
         <a asp-action="Create" class="btn btn-primary">
@@ -38,81 +38,219 @@
     </div>
 }
 
-@if (!Model.Any())
+@* Sección de Búsqueda y Filtros *@
+<div class="card mb-4">
+    <div class="card-header" data-bs-toggle="collapse" data-bs-target="#filtersCollapse" 
+         style="cursor: pointer;">
+        <div class="d-flex justify-content-between align-items-center">
+            <span>
+                <i class="bi bi-funnel"></i> Search & Filters
+                @if (Model.HasActiveFilters)
+                {
+                    <span class="badge bg-primary ms-2">Active</span>
+                }
+            </span>
+            <i class="bi bi-chevron-down"></i>
+        </div>
+    </div>
+    <div class="collapse @(Model.HasActiveFilters ? "show" : "")" id="filtersCollapse">
+        <div class="card-body">
+            <form asp-action="Index" method="get">
+                <div class="row g-3">
+                    @* Búsqueda por texto *@
+                    <div class="col-md-6">
+                        <label class="form-label">Search</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" name="searchTerm" class="form-control" 
+                                   placeholder="Search by title, original title, or synopsis..."
+                                   value="@Model.SearchTerm" />
+                        </div>
+                    </div>
+
+                    @* Filtro por género *@
+                    <div class="col-md-3">
+                        <label class="form-label">Genre</label>
+                        <select name="genreId" asp-items="Model.Genres" class="form-select">
+                            <option value="">All Genres</option>
+                        </select>
+                    </div>
+
+                    @* Ordenamiento *@
+                    <div class="col-md-3">
+                        <label class="form-label">Sort By</label>
+                        <div class="input-group">
+                            <select name="sortBy" asp-items="Model.SortOptions" class="form-select"></select>
+                            <select name="sortOrder" asp-items="Model.SortOrderOptions" class="form-select" 
+                                    style="max-width: 120px;">
+                            </select>
+                        </div>
+                    </div>
+
+                    @* Rango de años *@
+                    <div class="col-md-3">
+                        <label class="form-label">Year From</label>
+                        <input type="number" name="yearFrom" class="form-control" 
+                               placeholder="e.g., 1990" min="1888" max="2100"
+                               value="@Model.YearFrom" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Year To</label>
+                        <input type="number" name="yearTo" class="form-control" 
+                               placeholder="e.g., 2024" min="1888" max="2100"
+                               value="@Model.YearTo" />
+                    </div>
+
+                    @* Rango de precios *@
+                    <div class="col-md-3">
+                        <label class="form-label">Price From ($)</label>
+                        <input type="number" name="priceFrom" class="form-control" 
+                               placeholder="Min price" min="0" step="0.01"
+                               value="@Model.PriceFrom" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Price To ($)</label>
+                        <input type="number" name="priceTo" class="form-control" 
+                               placeholder="Max price" min="0" step="0.01"
+                               value="@Model.PriceTo" />
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search"></i> Apply Filters
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg"></i> Clear All
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* Resumen de resultados *@
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <span class="text-muted">
+            Showing <strong>@Model.Movies.Count</strong> of <strong>@Model.TotalCount</strong> movies
+            @if (Model.HasActiveFilters)
+            {
+                <span>(filtered)</span>
+            }
+        </span>
+    </div>
+    @if (Model.HasActiveFilters)
+    {
+        <div>
+            @* Tags de filtros activos *@
+            @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+            {
+                <span class="badge bg-info me-1">
+                    Search: "@Model.SearchTerm"
+                </span>
+            }
+            @if (Model.GenreId.HasValue)
+            {
+                var genreName = Model.Genres?.SelectedValue != null ? 
+                    ((SelectList)Model.Genres).FirstOrDefault(x => x.Value == Model.GenreId.ToString())?.Text : "";
+                <span class="badge bg-info me-1">
+                    Genre: @genreName
+                </span>
+            }
+            @if (Model.YearFrom.HasValue || Model.YearTo.HasValue)
+            {
+                <span class="badge bg-info me-1">
+                    Year: @(Model.YearFrom ?? 1888) - @(Model.YearTo ?? DateTime.Now.Year)
+                </span>
+            }
+            @if (Model.PriceFrom.HasValue || Model.PriceTo.HasValue)
+            {
+                <span class="badge bg-info me-1">
+                    Price: $@(Model.PriceFrom ?? 0) - $@(Model.PriceTo ?? 9999)
+                </span>
+            }
+        </div>
+    }
+</div>
+
+@* Lista de películas *@
+@if (!Model.Movies.Any())
 {
-    <div class="alert alert-info">
-        No movies found. <a asp-action="Create">Add your first movie!</a>
+    <div class="alert alert-info text-center py-5">
+        <i class="bi bi-film" style="font-size: 3rem;"></i>
+        <h4 class="mt-3">No movies found</h4>
+        @if (Model.HasActiveFilters)
+        {
+            <p>Try adjusting your filters or <a asp-action="Index">clear all filters</a>.</p>
+        }
+        else
+        {
+            <p>No movies in the catalog yet.</p>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Create" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-lg"></i> Add First Movie
+                </a>
+            }
+        }
     </div>
 }
 else
 {
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Title</th>
-                    <th>Year</th>
-                    <th>Duration</th>
-                    <th>Genres</th>
-                    <th>Price</th>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <th style="width: 200px;">Actions</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var movie in Model)
-                {
-                    <tr>
-                        <td>
-                            <a asp-action="Details" asp-route-id="@movie.MovieId" class="text-decoration-none fw-bold">
+    @* Vista de Cards *@
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        @foreach (var movie in Model.Movies)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a asp-action="Details" asp-route-id="@movie.MovieId" 
+                               class="text-decoration-none stretched-link">
                                 @movie.Title
                             </a>
-                        </td>
-                        <td>@movie.ReleaseYear</td>
-                        <td>@movie.DurationMinutes min</td>
-                        <td>
-                            @foreach (var genre in movie.Genres)
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            @movie.ReleaseYear • @movie.DurationMinutes min
+                        </h6>
+                        <div class="mb-2">
+                            @foreach (var genre in movie.Genres.Take(3))
                             {
                                 <span class="badge bg-secondary me-1">@genre</span>
                             }
-                        </td>
-                        <td>@movie.RentalPrice.ToString("C")</td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <a asp-action="Details" asp-route-id="@movie.MovieId"
-                                class="btn btn-sm btn-outline-info" title="Details">
-                                    <i class="bi bi-eye"></i>
+                            @if (movie.Genres.Count > 3)
+                            {
+                                <span class="badge bg-light text-dark">+@(movie.Genres.Count - 3)</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                        <span class="h5 text-success mb-0">@movie.RentalPrice.ToString("C")</span>
+                        <div class="btn-group btn-group-sm position-relative" style="z-index: 2;">
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
+                                    <input type="hidden" name="MovieId" value="@movie.MovieId" />
+                                    <input type="hidden" name="ReturnUrl" value="@Context.Request.PathAndQuery()" />
+                                    <button type="submit" class="btn btn-outline-success" title="Add to Cart">
+                                        <i class="bi bi-cart-plus"></i>
+                                    </button>
+                                </form>
+                            }
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@movie.MovieId"
+                                   class="btn btn-outline-warning" title="Edit">
+                                    <i class="bi bi-pencil"></i>
                                 </a>
-                                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                                {
-                                    <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
-                                        <input type="hidden" name="MovieId" value="@movie.MovieId" />
-                                        <input type="hidden" name="ReturnUrl" value="@Context.Request.Path" />
-                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Add to Cart">
-                                            <i class="bi bi-cart-plus"></i>
-                                        </button>
-                                    </form>
-                                }
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <a asp-action="Edit" asp-route-id="@movie.MovieId"
-                                    class="btn btn-sm btn-outline-warning" title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@movie.MovieId"
-                                    class="btn btn-sm btn-outline-danger" title="Delete">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                }
-                            </div>
-                        </td>                        
-                    
-
-                    </tr>
-                }
-            </tbody>
-        </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieRental.Data;
 using MovieRental.Models.Movies;
 using MovieRental.ViewModels.Movies;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MovieRental.Controllers;
 
@@ -17,12 +18,79 @@ public class MoviesController : Controller
     }
 
     // GET: Movies
-    public async Task<IActionResult> Index()
+// GET: Movies
+    public async Task<IActionResult> Index(
+        string? searchTerm,
+        int? genreId,
+        int? yearFrom,
+        int? yearTo,
+        decimal? priceFrom,
+        decimal? priceTo,
+        string? sortBy,
+        string? sortOrder)
     {
-        var movies = await _context.Movies
+        // Query base
+        var query = _context.Movies
             .Include(m => m.MovieGenres)
                 .ThenInclude(mg => mg.Genre)
-            .OrderByDescending(m => m.CreatedAt)
+            .AsQueryable();
+
+        // Filtro por término de búsqueda (título, título original, sinopsis)
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var term = searchTerm.ToLower();
+            query = query.Where(m =>
+                m.Title.ToLower().Contains(term) ||
+                (m.OriginalTitle != null && m.OriginalTitle.ToLower().Contains(term)) ||
+                (m.Synopsis != null && m.Synopsis.ToLower().Contains(term)));
+        }
+
+        // Filtro por género
+        if (genreId.HasValue)
+        {
+            query = query.Where(m => m.MovieGenres.Any(mg => mg.GenreId == genreId.Value));
+        }
+
+        // Filtro por rango de años
+        if (yearFrom.HasValue)
+        {
+            query = query.Where(m => m.ReleaseYear >= yearFrom.Value);
+        }
+        if (yearTo.HasValue)
+        {
+            query = query.Where(m => m.ReleaseYear <= yearTo.Value);
+        }
+
+        // Filtro por rango de precios
+        if (priceFrom.HasValue)
+        {
+            query = query.Where(m => m.RentalPrice >= priceFrom.Value);
+        }
+        if (priceTo.HasValue)
+        {
+            query = query.Where(m => m.RentalPrice <= priceTo.Value);
+        }
+
+        // Ordenamiento
+        query = (sortBy?.ToLower(), sortOrder?.ToLower()) switch
+        {
+            ("title", "desc") => query.OrderByDescending(m => m.Title),
+            ("title", _) => query.OrderBy(m => m.Title),
+            ("year", "asc") => query.OrderBy(m => m.ReleaseYear),
+            ("year", _) => query.OrderByDescending(m => m.ReleaseYear),
+            ("price", "desc") => query.OrderByDescending(m => m.RentalPrice),
+            ("price", _) => query.OrderBy(m => m.RentalPrice),
+            ("duration", "desc") => query.OrderByDescending(m => m.DurationMinutes),
+            ("duration", _) => query.OrderBy(m => m.DurationMinutes),
+            ("created", "asc") => query.OrderBy(m => m.CreatedAt),
+            _ => query.OrderByDescending(m => m.CreatedAt) // Default: más recientes primero
+        };
+
+        // Obtener total antes de proyectar
+        var totalCount = await query.CountAsync();
+
+        // Proyectar a ViewModel
+        var movies = await query
             .Select(m => new MovieIndexViewModel
             {
                 MovieId = m.MovieId,
@@ -34,9 +102,31 @@ public class MoviesController : Controller
             })
             .ToListAsync();
 
-        return View(movies);
-    }
+        // Preparar géneros para el dropdown
+        var genres = await _context.Genres
+            .OrderBy(g => g.Name)
+            .ToListAsync();
 
+        // Crear ViewModel
+        var viewModel = new MovieSearchViewModel
+        {
+            SearchTerm = searchTerm,
+            GenreId = genreId,
+            YearFrom = yearFrom,
+            YearTo = yearTo,
+            PriceFrom = priceFrom,
+            PriceTo = priceTo,
+            SortBy = sortBy ?? "created",
+            SortOrder = sortOrder ?? "desc",
+            Movies = movies,
+            TotalCount = totalCount,
+            Genres = new SelectList(genres, "GenreId", "Name", genreId),
+            SortOptions = new SelectList(MovieSearchViewModel.GetSortOptions(), "Value", "Text", sortBy ?? "created"),
+            SortOrderOptions = new SelectList(MovieSearchViewModel.GetSortOrderOptions(), "Value", "Text", sortOrder ?? "desc")
+        };
+
+        return View(viewModel);
+    }
     // GET: Movies/Details/5
     public async Task<IActionResult> Details(int? id)
     {

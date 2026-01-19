@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MovieRental.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/movies.css" asp-append-version="true" />    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
 </head>
 
 <body>
@@ -57,7 +59,18 @@
                 <li class="nav-item">
                     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                 </li>
-            </ul>                  
+            </ul>      
+
+            @* Búsqueda rápida *@
+            <form asp-controller="Movies" asp-action="Index" method="get" class="d-flex me-3">
+                <div class="input-group">
+                    <input type="text" name="searchTerm" class="form-control form-control-sm" 
+                        placeholder="Search movies..." style="width: 200px;" />
+                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>                        
             
             @* Menú de autenticación *@
             <ul class="navbar-nav">

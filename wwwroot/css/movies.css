@@ -1,0 +1,40 @@
+/* Movie Cards */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Stretched link fix for buttons */
+.card .btn-group {
+    position: relative;
+    z-index: 2;
+}
+
+.card .stretched-link::after {
+    z-index: 1;
+}
+
+/* Filter section */
+#filtersCollapse .form-label {
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+/* Active filter badges */
+.badge.bg-info {
+    font-weight: normal;
+}
+
+/* Price display */
+.card-footer .h5 {
+    font-weight: 600;
+}
+
+/* Search results count */
+.text-muted strong {
+    color: #333;
+}
