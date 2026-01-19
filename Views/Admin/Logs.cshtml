@@ -1,0 +1,94 @@
+﻿@model MovieRental.Controllers.LogsViewModel
+
+@{
+    ViewData["Title"] = "System Logs";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-file-text"></i> System Logs</h1>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Home
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                <strong><i class="bi bi-folder"></i> Log Files</strong>
+            </div>
+            <ul class="list-group list-group-flush">
+                @if (!Model.LogFiles.Any())
+                {
+                    <li class="list-group-item text-muted">No log files found</li>
+                }
+                else
+                {
+                    @foreach (var file in Model.LogFiles)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="fw-bold small">@file.FileName</div>
+                                <small class="text-muted">@file.FileSize</small>
+                            </div>
+                            <a asp-action="DownloadLog" asp-route-fileName="@file.FileName"
+                               class="btn btn-sm btn-outline-primary" title="Download">
+                                <i class="bi bi-download"></i>
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <strong><i class="bi bi-gear"></i> Options</strong>
+            </div>
+            <div class="card-body">
+                <form asp-action="Logs" method="get">
+                    <div class="mb-3">
+                        <label class="form-label small">Lines to show:</label>
+                        <select name="lines" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="50" selected="@(Model.LinesShown == 50)">Last 50</option>
+                            <option value="100" selected="@(Model.LinesShown == 100)">Last 100</option>
+                            <option value="200" selected="@(Model.LinesShown == 200)">Last 200</option>
+                            <option value="500" selected="@(Model.LinesShown == 500)">Last 500</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-terminal"></i> Latest Log (Last @Model.LinesShown lines)</strong>
+                <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <pre class="bg-dark text-light p-3 mb-0" 
+                     style="max-height: 600px; overflow-y: auto; font-size: 0.75rem; white-space: pre-wrap; word-wrap: break-word;">@Model.CurrentLogContent</pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    pre::-webkit-scrollbar {
+        width: 8px;
+    }
+    pre::-webkit-scrollbar-track {
+        background: #1a1a1a;
+    }
+    pre::-webkit-scrollbar-thumb {
+        background: #555;
+        border-radius: 4px;
+    }
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #777;
+    }
+</style>

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MovieRental.Models.Users;
+using MovieRental.Services;
 using MovieRental.ViewModels.Account;
 
 namespace MovieRental.Controllers;
@@ -11,22 +12,24 @@ public class AccountController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<AccountController> _logger;
+    private readonly ILoggerService _loggerService;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        ILogger<AccountController> logger)
+        ILogger<AccountController> logger,
+        ILoggerService loggerService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _logger = logger;
+        _loggerService = loggerService;
     }
 
     // GET: /Account/Register
     [HttpGet]
     public IActionResult Register(string? returnUrl = null)
     {
-        // Si ya está autenticado, redirigir a Home
         if (User.Identity?.IsAuthenticated == true)
         {
             return RedirectToAction("Index", "Home");
@@ -51,7 +54,7 @@ public class AccountController : Controller
                 Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                EmailConfirmed = true, // En producción, implementar confirmación por email
+                EmailConfirmed = true,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -59,12 +62,12 @@ public class AccountController : Controller
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("User {Email} created a new account.", model.Email);
+                _logger.LogInformation("User {Email} created a new account", model.Email);
+                _loggerService.LogUserAction(user.Id, "Register", $"New user registered: {model.Email}");
+                _loggerService.LogSecurityEvent("UserRegistration", $"New account created for {model.Email}", user.Id);
 
-                // Asignar rol de Customer por defecto
                 await _userManager.AddToRoleAsync(user, "Customer");
 
-                // Iniciar sesión automáticamente después del registro
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 TempData["SuccessMessage"] = "Welcome! Your account has been created successfully.";
@@ -72,10 +75,10 @@ public class AccountController : Controller
                 return RedirectToLocal(returnUrl);
             }
 
-            // Agregar errores al ModelState
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
+                _logger.LogWarning("Registration failed for {Email}: {Error}", model.Email, error.Description);
             }
         }
 
@@ -86,7 +89,6 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Login(string? returnUrl = null)
     {
-        // Si ya está autenticado, redirigir a Home
         if (User.Identity?.IsAuthenticated == true)
         {
             return RedirectToAction("Index", "Home");
@@ -113,12 +115,14 @@ public class AccountController : Controller
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("User {Email} logged in.", model.Email);
-
-                // Actualizar LastLoginAt
+                _logger.LogInformation("User {Email} logged in successfully", model.Email);
+                
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
+                    _loggerService.LogUserAction(user.Id, "Login", $"User logged in: {model.Email}");
+                    _loggerService.LogSecurityEvent("LoginSuccess", $"Successful login for {model.Email}", user.Id);
+                    
                     user.LastLoginAt = DateTime.UtcNow;
                     await _userManager.UpdateAsync(user);
                 }
@@ -128,10 +132,14 @@ public class AccountController : Controller
 
             if (result.IsLockedOut)
             {
-                _logger.LogWarning("User {Email} account locked out.", model.Email);
+                _logger.LogWarning("User {Email} account locked out", model.Email);
+                _loggerService.LogSecurityEvent("AccountLockout", $"Account locked out: {model.Email}");
                 return View("Lockout");
             }
 
+            _logger.LogWarning("Invalid login attempt for {Email}", model.Email);
+            _loggerService.LogSecurityEvent("LoginFailed", $"Failed login attempt for {model.Email}");
+            
             ModelState.AddModelError(string.Empty, "Invalid email or password.");
         }
 
@@ -144,8 +152,18 @@ public class AccountController : Controller
     [Authorize]
     public async Task<IActionResult> Logout()
     {
+        var userId = _userManager.GetUserId(User);
+        var email = User.Identity?.Name;
+
         await _signInManager.SignOutAsync();
-        _logger.LogInformation("User logged out.");
+
+        _logger.LogInformation("User {Email} logged out", email);
+        
+        if (!string.IsNullOrEmpty(userId))
+        {
+            _loggerService.LogUserAction(userId, "Logout", $"User logged out: {email}");
+        }
+
         TempData["SuccessMessage"] = "You have been logged out successfully.";
         return RedirectToAction("Index", "Home");
     }
@@ -154,6 +172,12 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult AccessDenied()
     {
+        var userId = _userManager.GetUserId(User);
+        var path = HttpContext.Request.Path;
+        
+        _logger.LogWarning("Access denied for user {UserId} attempting to access {Path}", userId, path);
+        _loggerService.LogSecurityEvent("AccessDenied", $"Unauthorized access attempt to {path}", userId);
+
         return View();
     }
 
@@ -164,7 +188,6 @@ public class AccountController : Controller
         return View();
     }
 
-    // Helper method para redirección segura
     private IActionResult RedirectToLocal(string? returnUrl)
     {
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))

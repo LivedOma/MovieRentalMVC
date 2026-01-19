@@ -6,16 +6,24 @@ using MovieRental.Models.Movies;
 using MovieRental.ViewModels.Movies;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MovieRental.Helpers;
+using MovieRental.Services;
 
 namespace MovieRental.Controllers;
 
 public class MoviesController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<MoviesController> _logger;
+    private readonly ILoggerService _loggerService;
 
-    public MoviesController(ApplicationDbContext context)
+    public MoviesController(
+        ApplicationDbContext context,
+        ILogger<MoviesController> logger,
+        ILoggerService loggerService)
     {
         _context = context;
+        _logger = logger;
+        _loggerService = loggerService;
     }
 
     // GET: Movies
@@ -218,24 +226,32 @@ public class MoviesController : Controller
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
-            // Agregar géneros seleccionados
-            if (viewModel.SelectedGenreIds.Any())
+            _logger.LogInformation("Movie created: {MovieTitle} (ID: {MovieId})", movie.Title, movie.MovieId);
+            _loggerService.LogDatabaseOperation("Create", "Movie", movie.MovieId);
+
+            // Agregar géneros
+            if (viewModel.SelectedGenreIds != null && viewModel.SelectedGenreIds.Any())
             {
-                var movieGenres = viewModel.SelectedGenreIds
-                    .Select(genreId => new MovieGenre
+                foreach (var genreId in viewModel.SelectedGenreIds)
+                {
+                    _context.MovieGenres.Add(new MovieGenre
                     {
                         MovieId = movie.MovieId,
                         GenreId = genreId
                     });
-
-                _context.MovieGenres.AddRange(movieGenres);
+                }
                 await _context.SaveChangesAsync();
+                
+                _logger.LogDebug("Added {GenreCount} genres to movie {MovieId}", 
+                    viewModel.SelectedGenreIds.Count, movie.MovieId);
             }
 
-            TempData["SuccessMessage"] = "Movie created successfully!";
+            TempData["SuccessMessage"] = $"Movie '{movie.Title}' created successfully!";
             return RedirectToAction(nameof(Index));
         }
 
+        _logger.LogWarning("Movie creation failed - validation errors");
+        
         viewModel.AvailableGenres = await GetGenreCheckboxList(viewModel.SelectedGenreIds);
         return View(viewModel);
     }
@@ -366,9 +382,19 @@ public class MoviesController : Controller
 
         if (movie != null)
         {
+            var movieTitle = movie.Title;
+            
             _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Movie deleted successfully!";
+
+            _logger.LogInformation("Movie deleted: {MovieTitle} (ID: {MovieId})", movieTitle, id);
+            _loggerService.LogDatabaseOperation("Delete", "Movie", id);
+
+            TempData["SuccessMessage"] = $"Movie '{movieTitle}' deleted successfully!";
+        }
+        else
+        {
+            _logger.LogWarning("Attempted to delete non-existent movie with ID: {MovieId}", id);
         }
 
         return RedirectToAction(nameof(Index));
