@@ -134,17 +134,41 @@
                 <h5 class="mb-0">Actions</h5>
             </div>
             <div class="card-body d-grid gap-2">
-                <a asp-action="Edit" asp-route-id="@Model.MovieId" class="btn btn-warning">
-                    <i class="bi bi-pencil"></i> Edit Movie
-                </a>
-                <a asp-action="Delete" asp-route-id="@Model.MovieId" class="btn btn-danger">
-                    <i class="bi bi-trash"></i> Delete Movie
-                </a>
-                <hr />
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <form asp-controller="Cart" asp-action="Add" method="post">
+                        <input type="hidden" name="MovieId" value="@Model.MovieId" />
+                        <input type="hidden" name="ReturnUrl" value="@Context.Request.Path" />
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-cart-plus"></i> Add to Cart - @Model.RentalPrice.ToString("C")
+                        </button>
+                    </form>
+                    <hr />
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" 
+                    asp-route-returnUrl="@Context.Request.Path" class="btn btn-success">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign in to Rent
+                    </a>
+                    <hr />
+                }
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.MovieId" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Edit Movie
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.MovieId" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete Movie
+                    </a>
+                    <hr />
+                }
+                
                 <a asp-action="Index" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Back to List
                 </a>
-            </div>
+            </div>            
         </div>
     </div>
 </div>

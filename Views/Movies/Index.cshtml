@@ -22,6 +22,22 @@
     </div>
 }
 
+@if (TempData["WarningMessage"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @TempData["WarningMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 @if (!Model.Any())
 {
     <div class="alert alert-info">
@@ -65,23 +81,34 @@ else
                         <td>@movie.RentalPrice.ToString("C")</td>
                         <td>
                             <div class="btn-group" role="group">
-                                <a asp-action="Details" asp-route-id="@movie.MovieId" 
+                                <a asp-action="Details" asp-route-id="@movie.MovieId"
                                 class="btn btn-sm btn-outline-info" title="Details">
                                     <i class="bi bi-eye"></i>
                                 </a>
+                                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                                {
+                                    <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
+                                        <input type="hidden" name="MovieId" value="@movie.MovieId" />
+                                        <input type="hidden" name="ReturnUrl" value="@Context.Request.Path" />
+                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Add to Cart">
+                                            <i class="bi bi-cart-plus"></i>
+                                        </button>
+                                    </form>
+                                }
                                 @if (User.IsInRole("Admin"))
                                 {
-                                    <a asp-action="Edit" asp-route-id="@movie.MovieId" 
+                                    <a asp-action="Edit" asp-route-id="@movie.MovieId"
                                     class="btn btn-sm btn-outline-warning" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a asp-action="Delete" asp-route-id="@movie.MovieId" 
+                                    <a asp-action="Delete" asp-route-id="@movie.MovieId"
                                     class="btn btn-sm btn-outline-danger" title="Delete">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 }
                             </div>
                         </td>                        
+                    
 
                     </tr>
                 }
